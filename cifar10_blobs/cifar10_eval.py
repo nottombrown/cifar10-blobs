@@ -114,14 +114,16 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, viz_op, images_op, la
                     'truck',
                 ]
 
-                plt.subplot(1, 11, 1)
+                plt.subplot(1, 12, 1)
                 plt.imshow(read_inputs)
-                plt.title("actual: %d" % (label_out[0]))
+                plt.title("actual: %s" % (labels[label_out[0]+1]))
+                plt.subplot(1, 12, 12)
+                plt.imshow(images_out[0,:,:,:])
                 for i in range(10):
-                    plt.subplot(1, 11, i + 2)
+                    plt.subplot(1, 12, i + 2)
                     label_map = viz_out[0, :, :, i]
                     plt.imshow(label_map)
-                    plt.title("out: %0.3f, label: %d" % (np.mean(label_map), labels[i]))
+                    plt.title("%s : %0.3f" % (labels[i], np.mean(label_map)))
                 plt.show()
 
             # Compute precision @ 1.
