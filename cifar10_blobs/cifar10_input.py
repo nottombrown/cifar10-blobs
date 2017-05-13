@@ -24,6 +24,8 @@ import os
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
+import matplotlib.pyplot as plt
+
 # Process images of this size. Note that this differs from the original CIFAR
 # image size of 32 x 32. If one alters this number, then the entire model
 # architecture will change and any model would need to be retrained.
@@ -240,8 +242,11 @@ def inputs(eval_data, data_dir, batch_size):
   min_fraction_of_examples_in_queue = 0.4
   min_queue_examples = int(num_examples_per_epoch *
                            min_fraction_of_examples_in_queue)
-
-  # Generate a batch of images and labels by building up a queue of examples.
-  return _generate_image_and_label_batch(float_image, read_input.label,
+ 
+  image, label = _generate_image_and_label_batch(float_image, read_input.label,
                                          min_queue_examples, batch_size,
                                          shuffle=False)
+
+  # Generate a batch of images and labels by building up a queue of examples.
+  return image, label, reshaped_image
+

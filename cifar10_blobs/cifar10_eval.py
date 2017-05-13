@@ -61,7 +61,7 @@ tf.app.flags.DEFINE_boolean('run_once', True,
                          """Whether to run eval only once.""")
 
 
-def eval_once(saver, summary_writer, top_k_op, summary_op, viz_op, images_op, label_op):
+def eval_once(saver, summary_writer, top_k_op, summary_op, viz_op, images_op, label_op, read_input_op):
   """Run Eval once.
 
   Args:
@@ -96,14 +96,14 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, viz_op, images_op, la
       total_sample_count = num_iter * FLAGS.batch_size
       step = 0
       while step < num_iter and not coord.should_stop():
-        predictions, viz_out, images_out, label_out = sess.run([top_k_op, viz_op, images_op, label_op])
+        predictions, viz_out, images_out, label_out, read_inputs = sess.run([top_k_op, viz_op, images_op, label_op, read_input_op])
         true_count += np.sum(predictions)
         step += 1
 
         import ipdb
         ipdb.set_trace()
         plt.subplot(1,11,1)
-        plt.imshow(images_out[0,:,:,:])
+        plt.imshow(read_inputs)
         for i in range(10):
           plt.subplot(1,11,i+2)
           label_map = viz_out[0,:,:,i]
@@ -131,7 +131,7 @@ def evaluate():
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
     eval_data = True
-    images, labels = cifar10.inputs(eval_data=eval_data)
+    images, labels, read_input = cifar10.inputs(eval_data=eval_data)
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
@@ -152,7 +152,7 @@ def evaluate():
     summary_writer = tf.train.SummaryWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op, viz_op, images, labels)
+      eval_once(saver, summary_writer, top_k_op, summary_op, viz_op, images, labels, read_input)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)

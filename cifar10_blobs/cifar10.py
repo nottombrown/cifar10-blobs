@@ -49,12 +49,12 @@ from cifar10_blobs import cifar10_input
 FLAGS = tf.app.flags.FLAGS
 
 # Basic model parameters.
-# tf.app.flags.DEFINE_integer('batch_size', 128,
-#                             """Number of images to process in a batch.""")
-# tf.app.flags.DEFINE_string('data_dir', '/tmp/cifar10_data',
-#                            """Path to the CIFAR-10 data directory.""")
-# tf.app.flags.DEFINE_boolean('use_fp16', False,
-#                             """Train the model using fp16.""")
+tf.app.flags.DEFINE_integer('batch_size', 128,
+                            """Number of images to process in a batch.""")
+tf.app.flags.DEFINE_string('data_dir', '/tmp/cifar10_data',
+                           """Path to the CIFAR-10 data directory.""")
+tf.app.flags.DEFINE_boolean('use_fp16', False,
+                            """Train the model using fp16.""")
 
 # Global constants describing the CIFAR-10 data set.
 IMAGE_SIZE = cifar10_input.IMAGE_SIZE
@@ -176,13 +176,13 @@ def inputs(eval_data):
   if not FLAGS.data_dir:
     raise ValueError('Please supply a data_dir')
   data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
-  images, labels = cifar10_input.inputs(eval_data=eval_data,
-                                        data_dir=data_dir,
-                                        batch_size=FLAGS.batch_size)
+  images, labels, read_input = cifar10_input.inputs(eval_data=eval_data,
+                                                     data_dir=data_dir,
+                                                     batch_size=FLAGS.batch_size)
   if FLAGS.use_fp16:
     images = tf.cast(images, tf.float16)
     labels = tf.cast(labels, tf.float16)
-  return images, labels
+  return images, labels, read_input
 
 
 def inference(images):
