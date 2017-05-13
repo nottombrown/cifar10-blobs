@@ -41,9 +41,10 @@ import os.path
 import time
 
 import numpy as np
+from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
-from cifar10_blobs import cifar10
+from tensorflow.models.image.cifar10 import cifar10
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -82,7 +83,7 @@ def train():
     summary_op = tf.merge_all_summaries()
 
     # Build an initialization operation to run below.
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
 
     # Start running operations on the Graph.
     sess = tf.Session(config=tf.ConfigProto(
@@ -94,7 +95,7 @@ def train():
 
     summary_writer = tf.train.SummaryWriter(FLAGS.train_dir, sess.graph)
 
-    for step in range(FLAGS.max_steps):
+    for step in xrange(FLAGS.max_steps):
       start_time = time.time()
       _, loss_value = sess.run([train_op, loss])
       duration = time.time() - start_time
