@@ -44,7 +44,7 @@ import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
-from tensorflow.models.image.cifar10 import cifar10
+import cifar10
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -56,7 +56,6 @@ tf.app.flags.DEFINE_integer('max_steps', 1000000,
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             """Whether to log device placement.""")
 
-
 def train():
   """Train CIFAR-10 for a number of steps."""
   with tf.Graph().as_default():
@@ -67,7 +66,7 @@ def train():
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
-    logits = cifar10.inference(images)
+    logits, viz_graph = cifar10.inference(images)
 
     # Calculate loss.
     loss = cifar10.loss(logits, labels)
